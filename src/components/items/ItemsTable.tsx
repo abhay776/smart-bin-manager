@@ -39,15 +39,15 @@ export function ItemsTable({ items, onDelete, onEdit }: ItemsTableProps) {
   const isLowStock = (quantity: number) => quantity < 10;
 
   return (
-    <div className="rounded-xl border border-border overflow-hidden bg-card">
-      <Table>
+    <div className="rounded-xl border border-border overflow-hidden bg-card overflow-x-auto">
+      <Table className="min-w-[700px]">
         <TableHeader>
           <TableRow className="bg-muted/50">
             <TableHead className="font-semibold">Name</TableHead>
-            <TableHead className="font-semibold">Barcode</TableHead>
+            <TableHead className="font-semibold hidden sm:table-cell">Barcode</TableHead>
             <TableHead className="font-semibold">Category</TableHead>
             <TableHead className="font-semibold text-right">Qty</TableHead>
-            <TableHead className="font-semibold">Location</TableHead>
+            <TableHead className="font-semibold hidden md:table-cell">Location</TableHead>
             <TableHead className="font-semibold">Expiration</TableHead>
             <TableHead className="font-semibold w-[50px]"></TableHead>
           </TableRow>
@@ -62,9 +62,9 @@ export function ItemsTable({ items, onDelete, onEdit }: ItemsTableProps) {
           ) : (
             items.map((item) => (
               <TableRow key={item.id} className="group hover:bg-muted/30 transition-colors">
-                <TableCell className="font-medium">{item.name}</TableCell>
-                <TableCell>
-                  <code className="font-mono text-sm bg-muted px-2 py-1 rounded">
+                <TableCell className="font-medium text-sm md:text-base">{item.name}</TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  <code className="font-mono text-xs md:text-sm bg-muted px-2 py-1 rounded">
                     {item.barcode}
                   </code>
                 </TableCell>
@@ -82,7 +82,7 @@ export function ItemsTable({ items, onDelete, onEdit }: ItemsTableProps) {
                     <Badge variant="destructive" className="ml-2 text-[10px]">Low</Badge>
                   )}
                 </TableCell>
-                <TableCell className="text-muted-foreground">{item.location}</TableCell>
+                <TableCell className="text-muted-foreground hidden md:table-cell">{item.location}</TableCell>
                 <TableCell>
                   <span className={cn(
                     "text-sm",

@@ -20,10 +20,10 @@ export default function Bins() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Bins</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Bins</h1>
+        <p className="text-sm md:text-base text-muted-foreground mt-1">
           Storage bins with dynamic allocation
         </p>
       </div>
@@ -40,7 +40,7 @@ export default function Bins() {
 
       {/* Bin Detail Dialog */}
       <Dialog open={!!selectedBin} onOpenChange={() => setSelectedBin(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{selectedBin?.name}</DialogTitle>
           </DialogHeader>
