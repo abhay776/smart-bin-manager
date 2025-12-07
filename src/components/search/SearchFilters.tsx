@@ -46,9 +46,9 @@ export function SearchFilters({ onSearch, filters }: SearchFiltersProps) {
   const hasFilters = Object.values(localFilters).some(v => v);
 
   return (
-    <div className="space-y-4 p-6 rounded-xl border border-border bg-card">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-lg">Search & Filter</h3>
+    <div className="space-y-4 p-4 md:p-6 rounded-xl border border-border bg-card">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <h3 className="font-semibold text-base md:text-lg">Search & Filter</h3>
         {hasFilters && (
           <Button variant="ghost" size="sm" onClick={handleClear} className="text-muted-foreground">
             <X className="h-4 w-4 mr-1" />
