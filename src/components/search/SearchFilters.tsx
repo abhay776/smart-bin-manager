@@ -76,14 +76,14 @@ export function SearchFilters({ onSearch, filters }: SearchFiltersProps) {
         <div className="space-y-2">
           <Label htmlFor="category">Category</Label>
           <Select 
-            value={localFilters.category || ""}
-            onValueChange={(value) => handleChange("category", value)}
+            value={localFilters.category || "all"}
+            onValueChange={(value) => handleChange("category", value === "all" ? "" : value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="All categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All categories</SelectItem>
+              <SelectItem value="all">All categories</SelectItem>
               {CATEGORIES.map((cat) => (
                 <SelectItem key={cat} value={cat}>{cat}</SelectItem>
               ))}
