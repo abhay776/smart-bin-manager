@@ -8,7 +8,7 @@ class InventoryStore {
 
   constructor() {
     this.initializeBins();
-    this.seedData();
+    // No seed data - start fresh for Chakra Robotics Club
   }
 
   private initializeBins() {
@@ -25,24 +25,7 @@ class InventoryStore {
     });
   }
 
-  private seedData() {
-    const sampleItems: Omit<Item, 'id' | 'binId' | 'createdAt' | 'updatedAt'>[] = [
-      { name: 'Arduino Uno', category: 'Electronics', quantity: 25, expirationDate: '2026-12-31', location: 'Aisle A-1', barcode: 'ELE001' },
-      { name: 'Raspberry Pi 4', category: 'Electronics', quantity: 8, expirationDate: '2026-06-15', location: 'Aisle A-1', barcode: 'ELE002' },
-      { name: 'USB-C Cables', category: 'Electronics', quantity: 3, expirationDate: '2027-01-01', location: 'Aisle A-2', barcode: 'ELE003' },
-      { name: 'Work Gloves (L)', category: 'Clothing', quantity: 50, expirationDate: '2025-08-20', location: 'Aisle B-1', barcode: 'CLO001' },
-      { name: 'Safety Vests', category: 'Clothing', quantity: 15, expirationDate: '2026-03-10', location: 'Aisle B-2', barcode: 'CLO002' },
-      { name: 'Canned Beans', category: 'Food', quantity: 200, expirationDate: '2025-12-15', location: 'Aisle C-1', barcode: 'FOO001' },
-      { name: 'Protein Bars', category: 'Food', quantity: 5, expirationDate: '2025-12-10', location: 'Aisle C-2', barcode: 'FOO002' },
-      { name: 'Power Drill', category: 'Tools', quantity: 12, expirationDate: '2030-01-01', location: 'Aisle D-1', barcode: 'TOO001' },
-      { name: 'Screwdriver Set', category: 'Tools', quantity: 30, expirationDate: '2030-01-01', location: 'Aisle D-1', barcode: 'TOO002' },
-      { name: 'Steel Sheets', category: 'Raw Materials', quantity: 45, expirationDate: '2030-01-01', location: 'Aisle E-1', barcode: 'RAW001' },
-      { name: 'Cardboard Boxes', category: 'Packaging', quantity: 500, expirationDate: '2028-01-01', location: 'Aisle F-1', barcode: 'PAC001' },
-      { name: 'Bubble Wrap', category: 'Packaging', quantity: 2, expirationDate: '2027-06-01', location: 'Aisle F-2', barcode: 'PAC002' },
-    ];
-
-    sampleItems.forEach(item => this.addItem(item));
-  }
+  // Seed data removed - Chakra Robotics Club starts fresh
 
   generateId(): string {
     return `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
