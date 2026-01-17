@@ -5,8 +5,11 @@ import {
   Search, 
   AlertTriangle, 
   Plus,
-  Warehouse
+  Cog,
+  LogOut
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -30,16 +33,18 @@ const navigationItems = [
 ];
 
 export function AppSidebar() {
+  const { logout } = useAuth();
+
   return (
     <Sidebar className="border-r border-sidebar-border">
       <SidebarHeader className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary">
-            <Warehouse className="h-5 w-5 text-sidebar-primary-foreground" />
+            <Cog className="h-5 w-5 text-sidebar-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-sidebar-foreground">WareTrack</h1>
-            <p className="text-xs text-sidebar-foreground/60">Inventory System</p>
+            <h1 className="text-lg font-semibold text-sidebar-foreground">Chakra</h1>
+            <p className="text-xs text-sidebar-foreground/60">Robotics Inventory</p>
           </div>
         </div>
       </SidebarHeader>
@@ -93,9 +98,18 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t border-sidebar-border">
+      <SidebarFooter className="p-4 border-t border-sidebar-border space-y-3">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="w-full justify-start text-sidebar-foreground/70 hover:text-sidebar-foreground"
+          onClick={logout}
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Logout
+        </Button>
         <div className="text-xs text-sidebar-foreground/40 text-center">
-          v1.0.0 • Dynamic Binning
+          v1.0.0 • Chakra Robotics
         </div>
       </SidebarFooter>
     </Sidebar>
