@@ -9,7 +9,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Simple password for club heads - change this to your desired password
-const ADMIN_PASSWORD = 'chakra2024';
+const ADMIN_PASSWORD = 'teamchakra01';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
