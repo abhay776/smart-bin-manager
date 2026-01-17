@@ -95,6 +95,24 @@ class InventoryStore {
     return Array.from(this.bins.values());
   }
 
+  getBin(id: string): Bin | undefined {
+    return this.bins.get(id);
+  }
+
+  updateBin(id: string, updates: Partial<Bin>): Bin | undefined {
+    const bin = this.bins.get(id);
+    if (!bin) return undefined;
+
+    const updatedBin: Bin = {
+      ...bin,
+      ...updates,
+      id, // Keep original ID
+    };
+
+    this.bins.set(id, updatedBin);
+    return updatedBin;
+  }
+
   deleteItem(id: string): boolean {
     const item = this.items.get(id);
     if (!item) return false;

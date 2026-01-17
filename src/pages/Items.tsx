@@ -3,10 +3,12 @@ import { inventoryStore } from "@/lib/inventory-store";
 import { Item } from "@/types/inventory";
 import { ItemsTable } from "@/components/items/ItemsTable";
 import { AddItemForm } from "@/components/items/AddItemForm";
+import { EditItemDialog } from "@/components/items/EditItemDialog";
 import { toast } from "sonner";
 
 export default function Items() {
   const [items, setItems] = useState<Item[]>([]);
+  const [editingItem, setEditingItem] = useState<Item | null>(null);
 
   const loadItems = useCallback(() => {
     setItems(inventoryStore.getAllItems());
@@ -26,6 +28,20 @@ export default function Items() {
     }
   };
 
+  const handleEdit = (item: Item) => {
+    setEditingItem(item);
+  };
+
+  const handleSaveEdit = (id: string, updates: Partial<Item>) => {
+    const updated = inventoryStore.updateItem(id, updates);
+    if (updated) {
+      toast.success("Item updated");
+      loadItems();
+    } else {
+      toast.error("Failed to update item");
+    }
+  };
+
   return (
     <div className="space-y-4 md:space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -38,7 +54,14 @@ export default function Items() {
         <AddItemForm onItemAdded={loadItems} />
       </div>
 
-      <ItemsTable items={items} onDelete={handleDelete} />
+      <ItemsTable items={items} onDelete={handleDelete} onEdit={handleEdit} />
+
+      <EditItemDialog
+        item={editingItem}
+        open={!!editingItem}
+        onClose={() => setEditingItem(null)}
+        onSave={handleSaveEdit}
+      />
     </div>
   );
 }
