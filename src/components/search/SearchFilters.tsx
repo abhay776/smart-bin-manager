@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CATEGORIES } from "@/types/inventory";
+import { inventoryStore } from "@/lib/inventory-store";
 import { Search, X } from "lucide-react";
 
 export interface SearchFiltersData {
@@ -27,6 +27,11 @@ interface SearchFiltersProps {
 
 export function SearchFilters({ onSearch, filters }: SearchFiltersProps) {
   const [localFilters, setLocalFilters] = useState<SearchFiltersData>(filters);
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    setCategories(inventoryStore.getCategories());
+  }, []);
 
   const handleChange = (key: keyof SearchFiltersData, value: string) => {
     const newFilters = { ...localFilters, [key]: value || undefined };
@@ -84,7 +89,7 @@ export function SearchFilters({ onSearch, filters }: SearchFiltersProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All categories</SelectItem>
-              {CATEGORIES.map((cat) => (
+              {categories.map((cat) => (
                 <SelectItem key={cat} value={cat}>{cat}</SelectItem>
               ))}
             </SelectContent>

@@ -6,9 +6,13 @@ import {
   AlertTriangle, 
   Plus,
   Cog,
-  LogOut
+  LogOut,
+  Tag,
+  Moon,
+  Sun
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -28,12 +32,14 @@ const navigationItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Items", url: "/items", icon: Package },
   { title: "Bins", url: "/bins", icon: Grid3X3 },
+  { title: "Categories", url: "/categories", icon: Tag },
   { title: "Search", url: "/search", icon: Search },
   { title: "Alerts", url: "/alerts", icon: AlertTriangle },
 ];
 
 export function AppSidebar() {
   const { logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <Sidebar className="border-r border-sidebar-border">
@@ -99,6 +105,15 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-4 border-t border-sidebar-border space-y-3">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="w-full justify-start text-sidebar-foreground/70 hover:text-sidebar-foreground"
+          onClick={toggleTheme}
+        >
+          {theme === 'dark' ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
+          {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+        </Button>
         <Button 
           variant="ghost" 
           size="sm" 
