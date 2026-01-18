@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Item, CATEGORIES } from "@/types/inventory";
+import { Item } from "@/types/inventory";
+import { inventoryStore } from "@/lib/inventory-store";
 import {
   Dialog,
   DialogContent,
@@ -25,9 +26,12 @@ interface EditItemDialogProps {
 }
 
 export function EditItemDialog({ item, open, onClose, onSave }: EditItemDialogProps) {
+  const [categories, setCategories] = useState<string[]>([]);
+  const [subtypes, setSubtypes] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     category: "",
+    subType: "",
     quantity: 0,
     expirationDate: "",
     location: "",
@@ -35,17 +39,35 @@ export function EditItemDialog({ item, open, onClose, onSave }: EditItemDialogPr
   });
 
   useEffect(() => {
+    setCategories(inventoryStore.getCategories());
+  }, []);
+
+  useEffect(() => {
     if (item) {
       setFormData({
         name: item.name,
         category: item.category,
+        subType: item.subType || "",
         quantity: item.quantity,
         expirationDate: item.expirationDate,
         location: item.location,
         barcode: item.barcode,
       });
+      setSubtypes(inventoryStore.getSubtypes(item.category));
     }
   }, [item]);
+
+  useEffect(() => {
+    if (formData.category) {
+      setSubtypes(inventoryStore.getSubtypes(formData.category));
+    } else {
+      setSubtypes([]);
+    }
+  }, [formData.category]);
+
+  const handleCategoryChange = (value: string) => {
+    setFormData({ ...formData, category: value, subType: "" });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +76,7 @@ export function EditItemDialog({ item, open, onClose, onSave }: EditItemDialogPr
     onSave(item.id, {
       name: formData.name,
       category: formData.category as Item["category"],
+      subType: formData.subType || undefined,
       quantity: formData.quantity,
       expirationDate: formData.expirationDate,
       location: formData.location,
@@ -84,13 +107,13 @@ export function EditItemDialog({ item, open, onClose, onSave }: EditItemDialogPr
               <Label htmlFor="edit-category">Category</Label>
               <Select
                 value={formData.category}
-                onValueChange={(value) => setFormData({ ...formData, category: value })}
+                onValueChange={handleCategoryChange}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((cat) => (
+                  {categories.map((cat) => (
                     <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                   ))}
                 </SelectContent>
@@ -109,6 +132,26 @@ export function EditItemDialog({ item, open, onClose, onSave }: EditItemDialogPr
               />
             </div>
           </div>
+
+          {subtypes.length > 0 && (
+            <div className="space-y-2">
+              <Label htmlFor="edit-subType">Type (Optional)</Label>
+              <Select
+                value={formData.subType || "none"}
+                onValueChange={(value) => setFormData({ ...formData, subType: value === "none" ? "" : value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {subtypes.map((sub) => (
+                    <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -143,11 +186,11 @@ export function EditItemDialog({ item, open, onClose, onSave }: EditItemDialogPr
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={onClose} className="w-full sm:w-auto">
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" className="w-full sm:w-auto">
               Save Changes
             </Button>
           </div>

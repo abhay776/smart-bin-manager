@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CATEGORIES, Category } from "@/types/inventory";
+import { Category } from "@/types/inventory";
+import { inventoryStore } from "@/lib/inventory-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,11 +24,11 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, ScanBarcode } from "lucide-react";
 import { toast } from "sonner";
-import { inventoryStore } from "@/lib/inventory-store";
 
 const itemSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
   category: z.string().min(1, "Category is required"),
+  subType: z.string().optional(),
   quantity: z.coerce.number().min(1, "Quantity must be at least 1"),
   expirationDate: z.string().min(1, "Expiration date is required"),
   location: z.string().min(1, "Location is required").max(100),
@@ -42,12 +43,28 @@ interface AddItemFormProps {
 
 export function AddItemForm({ onItemAdded }: AddItemFormProps) {
   const [open, setOpen] = useState(false);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [subtypes, setSubtypes] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  useEffect(() => {
+    setCategories(inventoryStore.getCategories());
+  }, []);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      setSubtypes(inventoryStore.getSubtypes(selectedCategory));
+    } else {
+      setSubtypes([]);
+    }
+  }, [selectedCategory]);
   
   const form = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema),
     defaultValues: {
       name: "",
       category: "",
+      subType: "",
       quantity: 1,
       expirationDate: "",
       location: "",
@@ -67,6 +84,7 @@ export function AddItemForm({ onItemAdded }: AddItemFormProps) {
       inventoryStore.addItem({
         name: data.name,
         category: data.category as Category,
+        subType: data.subType || undefined,
         quantity: data.quantity,
         expirationDate: data.expirationDate,
         location: data.location,
@@ -75,6 +93,7 @@ export function AddItemForm({ onItemAdded }: AddItemFormProps) {
 
       toast.success("Item added successfully!");
       form.reset();
+      setSelectedCategory("");
       setOpen(false);
       onItemAdded?.();
     } catch (error) {
@@ -86,6 +105,12 @@ export function AddItemForm({ onItemAdded }: AddItemFormProps) {
     const prefix = form.getValues("category")?.slice(0, 3).toUpperCase() || "ITM";
     const random = Math.random().toString(36).substring(2, 8).toUpperCase();
     form.setValue("barcode", `${prefix}${random}`);
+  };
+
+  const handleCategoryChange = (value: string) => {
+    form.setValue("category", value);
+    form.setValue("subType", "");
+    setSelectedCategory(value);
   };
 
   return (
@@ -119,14 +144,14 @@ export function AddItemForm({ onItemAdded }: AddItemFormProps) {
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select 
-                onValueChange={(value) => form.setValue("category", value)}
-                defaultValue={form.getValues("category")}
+                onValueChange={handleCategoryChange}
+                value={form.watch("category")}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((cat) => (
+                  {categories.map((cat) => (
                     <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                   ))}
                 </SelectContent>
@@ -136,6 +161,26 @@ export function AddItemForm({ onItemAdded }: AddItemFormProps) {
               )}
             </div>
           </div>
+
+          {subtypes.length > 0 && (
+            <div className="space-y-2">
+              <Label htmlFor="subType">Type (Optional)</Label>
+              <Select 
+                onValueChange={(value) => form.setValue("subType", value === "none" ? "" : value)}
+                value={form.watch("subType") || "none"}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {subtypes.map((sub) => (
+                    <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -194,11 +239,11 @@ export function AddItemForm({ onItemAdded }: AddItemFormProps) {
             )}
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} className="w-full sm:w-auto">
               Cancel
             </Button>
-            <Button type="submit">Add Item</Button>
+            <Button type="submit" className="w-full sm:w-auto">Add Item</Button>
           </div>
         </form>
       </DialogContent>
